@@ -13,14 +13,17 @@ use Symfony\Component\Console\Attribute\AsCommand;
     name: 'users:list',
     description: 'List all users or just one'
 )]
-class UsersCommand extends \RZ\Roadiz\CoreBundle\Console\UsersCommand
+final class UsersCommand extends \RZ\Roadiz\CoreBundle\Console\UsersCommand
 {
+    private TwoFactorUserProviderInterface $twoFactorUserProvider;
+
     public function __construct(
-        protected readonly TwoFactorUserProviderInterface $twoFactorUserProvider,
+        TwoFactorUserProviderInterface $twoFactorUserProvider,
         ManagerRegistry $managerRegistry,
         string $name = null
     ) {
         parent::__construct($managerRegistry, $name);
+        $this->twoFactorUserProvider = $twoFactorUserProvider;
     }
 
     protected function getUserTableRow(User $user): array
