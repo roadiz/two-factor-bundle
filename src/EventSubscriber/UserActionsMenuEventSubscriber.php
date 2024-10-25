@@ -6,13 +6,15 @@ namespace RZ\Roadiz\TwoFactorBundle\EventSubscriber;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 use Themes\Rozier\Event\UserActionsMenuEvent;
 
 final class UserActionsMenuEventSubscriber implements EventSubscriberInterface
 {
-    public function __construct(private UrlGeneratorInterface $urlGenerator, private Security $security)
-    {
+    public function __construct(
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly Security $security
+    ) {
     }
 
     public static function getSubscribedEvents(): array
