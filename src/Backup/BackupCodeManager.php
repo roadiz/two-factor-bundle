@@ -10,11 +10,11 @@ use Scheb\TwoFactorBundle\Model\BackupCodeInterface;
 use Scheb\TwoFactorBundle\Model\PersisterInterface;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Backup\BackupCodeManagerInterface;
 
-final readonly class BackupCodeManager implements BackupCodeManagerInterface
+final class BackupCodeManager implements BackupCodeManagerInterface
 {
     public function __construct(
         private TwoFactorUserProviderInterface $twoFactorUserProvider,
-        private PersisterInterface $persister,
+        private PersisterInterface $persister
     ) {
     }
 
