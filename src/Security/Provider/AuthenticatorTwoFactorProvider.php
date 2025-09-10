@@ -13,16 +13,15 @@ use Scheb\TwoFactorBundle\Security\TwoFactor\Provider\Totp\TotpAuthenticatorInte
 use Scheb\TwoFactorBundle\Security\TwoFactor\Provider\TwoFactorFormRendererInterface;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Provider\TwoFactorProviderInterface;
 
-final readonly class AuthenticatorTwoFactorProvider implements TwoFactorProviderInterface
+final class AuthenticatorTwoFactorProvider implements TwoFactorProviderInterface
 {
     public function __construct(
-        private TwoFactorUserProviderInterface $twoFactorUserProvider,
-        private TotpAuthenticatorInterface $authenticator,
-        private TwoFactorFormRendererInterface $formRenderer,
+        private readonly TwoFactorUserProviderInterface $twoFactorUserProvider,
+        private readonly TotpAuthenticatorInterface $authenticator,
+        private readonly TwoFactorFormRendererInterface $formRenderer,
     ) {
     }
 
-    #[\Override]
     public function beginAuthentication(AuthenticationContextInterface $context): bool
     {
         $user = $context->getUser();
@@ -38,23 +37,25 @@ final readonly class AuthenticatorTwoFactorProvider implements TwoFactorProvider
 
         $totpConfiguration = $twoFactorUser->getTotpAuthenticationConfiguration();
         if (null === $totpConfiguration) {
-            throw new TwoFactorProviderLogicException('User has to provide a TotpAuthenticationConfiguration for TOTP authentication.');
+            throw new TwoFactorProviderLogicException(
+                'User has to provide a TotpAuthenticationConfiguration for TOTP authentication.'
+            );
         }
 
         $secret = $totpConfiguration->getSecret();
         if (0 === \mb_strlen($secret)) {
-            throw new TwoFactorProviderLogicException('User has to provide a secret code for TOTP authentication.');
+            throw new TwoFactorProviderLogicException(
+                'User has to provide a secret code for TOTP authentication.'
+            );
         }
 
         return true;
     }
 
-    #[\Override]
     public function prepareAuthentication(object $user): void
     {
     }
 
-    #[\Override]
     public function validateAuthenticationCode(object $user, string $authenticationCode): bool
     {
         if ($user instanceof User) {
@@ -68,7 +69,6 @@ final readonly class AuthenticatorTwoFactorProvider implements TwoFactorProvider
         return $this->authenticator->checkCode($user, $authenticationCode);
     }
 
-    #[\Override]
     public function getFormRenderer(): TwoFactorFormRendererInterface
     {
         return $this->formRenderer;
