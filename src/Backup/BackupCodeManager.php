@@ -10,14 +10,15 @@ use Scheb\TwoFactorBundle\Model\BackupCodeInterface;
 use Scheb\TwoFactorBundle\Model\PersisterInterface;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Backup\BackupCodeManagerInterface;
 
-final class BackupCodeManager implements BackupCodeManagerInterface
+final readonly class BackupCodeManager implements BackupCodeManagerInterface
 {
     public function __construct(
-        private readonly TwoFactorUserProviderInterface $twoFactorUserProvider,
-        private readonly PersisterInterface $persister
+        private TwoFactorUserProviderInterface $twoFactorUserProvider,
+        private PersisterInterface $persister,
     ) {
     }
 
+    #[\Override]
     public function isBackupCode(object $user, string $code): bool
     {
         if ($user instanceof User) {
@@ -31,6 +32,7 @@ final class BackupCodeManager implements BackupCodeManagerInterface
         return false;
     }
 
+    #[\Override]
     public function invalidateBackupCode(object $user, string $code): void
     {
         if ($user instanceof User) {
