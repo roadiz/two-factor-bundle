@@ -119,13 +119,11 @@ class TwoFactorUser implements TotpTwoFactorInterface, BackupCodeInterface, Trus
         return $this;
     }
 
-    #[\Override]
     public function isTotpAuthenticationEnabled(): bool
     {
         return (bool) $this->secret && null !== $this->activatedAt;
     }
 
-    #[\Override]
     public function getTotpAuthenticationUsername(): string
     {
         if (null === $this->user) {
@@ -135,14 +133,12 @@ class TwoFactorUser implements TotpTwoFactorInterface, BackupCodeInterface, Trus
         return $this->user->getUserIdentifier();
     }
 
-    #[\Override]
     public function getTotpAuthenticationConfiguration(): ?TotpConfigurationInterface
     {
         // You could persist the other configuration options in the user entity to make it individual per user.
         return new TotpConfiguration($this->secret, $this->getAlgorithm(), $this->getPeriod(), $this->getDigits());
     }
 
-    #[\Override]
     public function isGoogleAuthenticatorEnabled(): bool
     {
         return (bool) $this->secret
@@ -153,7 +149,6 @@ class TwoFactorUser implements TotpTwoFactorInterface, BackupCodeInterface, Trus
         ;
     }
 
-    #[\Override]
     public function getGoogleAuthenticatorUsername(): string
     {
         if (null === $this->user) {
@@ -163,7 +158,6 @@ class TwoFactorUser implements TotpTwoFactorInterface, BackupCodeInterface, Trus
         return $this->user->getUserIdentifier();
     }
 
-    #[\Override]
     public function getGoogleAuthenticatorSecret(): ?string
     {
         return $this->secret;
@@ -172,12 +166,11 @@ class TwoFactorUser implements TotpTwoFactorInterface, BackupCodeInterface, Trus
     /**
      * Check if it is a valid backup code.
      */
-    #[\Override]
     public function isBackupCode(string $code): bool
     {
         // Loop over all backup codes and check if the code is valid
         foreach ($this->backupCodes as $backupCode) {
-            if (password_verify($code, (string) $backupCode)) {
+            if (password_verify($code, $backupCode)) {
                 return true;
             }
         }
@@ -188,12 +181,11 @@ class TwoFactorUser implements TotpTwoFactorInterface, BackupCodeInterface, Trus
     /**
      * Invalidate a backup code.
      */
-    #[\Override]
     public function invalidateBackupCode(string $code): void
     {
         // Loop over all backup codes and check if the code is valid to invalidate it
         foreach ($this->backupCodes as $key => $backupCode) {
-            if (password_verify($code, (string) $backupCode)) {
+            if (password_verify($code, $backupCode)) {
                 unset($this->backupCodes[$key]);
                 $this->backupCodes = array_values($this->backupCodes);
             }
@@ -210,7 +202,6 @@ class TwoFactorUser implements TotpTwoFactorInterface, BackupCodeInterface, Trus
         }
     }
 
-    #[\Override]
     public function getTrustedTokenVersion(): int
     {
         return $this->trustedVersion;
