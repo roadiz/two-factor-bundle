@@ -24,7 +24,7 @@ final class QrCodeController extends AbstractController
     public function __construct(
         private readonly TwoFactorUserProviderInterface $twoFactorUserProvider,
         private readonly TotpAuthenticatorInterface $totpAuthenticator,
-        private readonly GoogleAuthenticatorInterface $googleAuthenticator,
+        private readonly GoogleAuthenticatorInterface $googleAuthenticator
     ) {
     }
 
@@ -37,12 +37,12 @@ final class QrCodeController extends AbstractController
         }
 
         $user = $tokenStorage->getToken()->getUser();
-        if (!$user instanceof User) {
+        if (!($user instanceof User)) {
             throw $this->createAccessDeniedException('You must be logged in to access this page.');
         }
         $twoFactorUser = $this->twoFactorUserProvider->getFromUser($user);
 
-        if (!$twoFactorUser instanceof TwoFactorInterface) {
+        if (!($twoFactorUser instanceof TwoFactorInterface)) {
             throw $this->createNotFoundException('Cannot display QR code');
         }
 
