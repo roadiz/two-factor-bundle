@@ -13,6 +13,7 @@ use Symfony\Component\Validator\Constraints\Regex;
 
 class TwoFactorCodeActivationType extends AbstractType
 {
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -20,10 +21,10 @@ class TwoFactorCodeActivationType extends AbstractType
                 'label' => 'twoFactorCode',
                 'help' => 'twoFactorCode.help',
                 'attr' => [
-                    'autocomplete' => "one-time-code",
+                    'autocomplete' => 'one-time-code',
                     'autofocus' => true,
-                    'inputmode' => "numeric",
-                    'pattern' => "[0-9]*",
+                    'inputmode' => 'numeric',
+                    'pattern' => '[0-9]*',
                 ],
                 'constraints' => [
                     new NotBlank(),
