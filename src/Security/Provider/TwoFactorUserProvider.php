@@ -9,15 +9,14 @@ use RZ\Roadiz\CoreBundle\Entity\User;
 use RZ\Roadiz\TwoFactorBundle\Entity\TwoFactorUser;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Provider\Totp\TotpAuthenticatorInterface;
 
-final readonly class TwoFactorUserProvider implements TwoFactorUserProviderInterface
+final class TwoFactorUserProvider implements TwoFactorUserProviderInterface
 {
     public function __construct(
-        private ManagerRegistry $managerRegistry,
-        private TotpAuthenticatorInterface $totpAuthenticator,
+        private readonly ManagerRegistry $managerRegistry,
+        private readonly TotpAuthenticatorInterface $totpAuthenticator
     ) {
     }
 
-    #[\Override]
     public function getFromUser(User $user): ?TwoFactorUser
     {
         return $this->managerRegistry
@@ -25,7 +24,6 @@ final readonly class TwoFactorUserProvider implements TwoFactorUserProviderInter
             ->findOneBy(['user' => $user]);
     }
 
-    #[\Override]
     public function createForUser(User $user): TwoFactorUser
     {
         $twoFactorUser = $this->getFromUser($user);
@@ -42,30 +40,27 @@ final readonly class TwoFactorUserProvider implements TwoFactorUserProviderInter
         return $twoFactorUser;
     }
 
-    #[\Override]
     public function activate(TwoFactorUser $user): void
     {
         $user->setActivatedAt(new \DateTime());
         $this->managerRegistry->getManager()->flush();
     }
 
-    #[\Override]
     public function disable(TwoFactorUser $user): void
     {
         $this->managerRegistry->getManager()->remove($user);
         $this->managerRegistry->getManager()->flush();
     }
 
-    #[\Override]
     public function generateBackupCodes(TwoFactorUser $user): array
     {
         $length = $user->getDigits();
         // generate 10 random numeric codes of $length
         $codes = [];
-        for ($i = 0; $i < 10; ++$i) {
+        for ($i = 0; $i < 10; $i++) {
             // use random_int to generate a random number of $length
             $digits = [];
-            for ($j = 0; $j < $length; ++$j) {
+            for ($j = 0; $j < $length; $j++) {
                 $digits[] = (string) \random_int(0, 9);
             }
             $code = implode('', $digits);
