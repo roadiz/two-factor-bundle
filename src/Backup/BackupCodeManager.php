@@ -10,11 +10,11 @@ use Scheb\TwoFactorBundle\Model\BackupCodeInterface;
 use Scheb\TwoFactorBundle\Model\PersisterInterface;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Backup\BackupCodeManagerInterface;
 
-final class BackupCodeManager implements BackupCodeManagerInterface
+final readonly class BackupCodeManager implements BackupCodeManagerInterface
 {
     public function __construct(
-        private readonly TwoFactorUserProviderInterface $twoFactorUserProvider,
-        private readonly PersisterInterface $persister
+        private TwoFactorUserProviderInterface $twoFactorUserProvider,
+        private PersisterInterface $persister,
     ) {
     }
 
@@ -37,7 +37,7 @@ final class BackupCodeManager implements BackupCodeManagerInterface
             $user = $this->twoFactorUserProvider->getFromUser($user);
         }
 
-        if (!($user instanceof BackupCodeInterface)) {
+        if (!$user instanceof BackupCodeInterface) {
             return;
         }
 
