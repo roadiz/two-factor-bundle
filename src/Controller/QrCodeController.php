@@ -25,11 +25,10 @@ final class QrCodeController extends AbstractController
         private readonly TwoFactorUserProviderInterface $twoFactorUserProvider,
         private readonly TotpAuthenticatorInterface $totpAuthenticator,
         private readonly GoogleAuthenticatorInterface $googleAuthenticator,
-        private readonly TokenStorageInterface $tokenStorage,
     ) {
     }
 
-    public function totpQrCodeAction(): Response
+    public function totpQrCodeAction(TokenStorageInterface $tokenStorage): Response
     {
         $this->denyAccessUnlessGranted('ROLE_BACKEND_USER');
 
@@ -37,7 +36,7 @@ final class QrCodeController extends AbstractController
             throw $this->createAccessDeniedException('You cannot impersonate to access this page.');
         }
 
-        $user = $this->tokenStorage->getToken()?->getUser();
+        $user = $tokenStorage->getToken()->getUser();
         if (!$user instanceof User) {
             throw $this->createAccessDeniedException('You must be logged in to access this page.');
         }
