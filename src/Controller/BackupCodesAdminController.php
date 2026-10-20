@@ -7,20 +7,21 @@ namespace RZ\Roadiz\TwoFactorBundle\Controller;
 use RZ\Roadiz\CoreBundle\Entity\User;
 use RZ\Roadiz\TwoFactorBundle\Entity\TwoFactorUser;
 use RZ\Roadiz\TwoFactorBundle\Security\Provider\TwoFactorUserProviderInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Themes\Rozier\RozierApp;
 
-final class BackupCodesAdminController extends RozierApp
+final class BackupCodesAdminController extends AbstractController
 {
     public function __construct(
-        private readonly TwoFactorUserProviderInterface $twoFactorUserProvider
+        private readonly TwoFactorUserProviderInterface $twoFactorUserProvider,
+        private readonly TokenStorageInterface $tokenStorage,
     ) {
     }
 
-    public function backupCodesAdminAction(Request $request, TokenStorageInterface $tokenStorage): Response
+    public function backupCodesAdminAction(Request $request): Response
     {
         $this->denyAccessUnlessGranted('ROLE_BACKEND_USER');
 
@@ -28,8 +29,8 @@ final class BackupCodesAdminController extends RozierApp
             throw $this->createAccessDeniedException('You cannot impersonate to access this page.');
         }
 
-        $user = $tokenStorage->getToken()->getUser();
-        if (!($user instanceof User)) {
+        $user = $this->tokenStorage->getToken()?->getUser();
+        if (!$user instanceof User) {
             throw $this->createAccessDeniedException('You must be logged in to access this page.');
         }
         $twoFactorUser = $this->twoFactorUserProvider->getFromUser($user);
@@ -39,12 +40,13 @@ final class BackupCodesAdminController extends RozierApp
 
         $form = $this->createForm(FormType::class);
         $form->handleRequest($request);
+        $assignation = [];
         if ($form->isSubmitted() && $form->isValid()) {
             $backupCodes = $this->twoFactorUserProvider->generateBackupCodes($twoFactorUser);
-            $this->assignation['backupCodes'] = $backupCodes;
+            $assignation['backupCodes'] = $backupCodes;
         }
-        $this->assignation['form'] = $form->createView();
+        $assignation['form'] = $form->createView();
 
-        return $this->render('@RoadizTwoFactor/admin/backup_codes.html.twig', $this->assignation);
+        return $this->render('@RoadizTwoFactor/admin/backup_codes.html.twig', $assignation);
     }
 }
