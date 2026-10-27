@@ -17,11 +17,12 @@ class RoadizTwoFactorExtension extends Extension
     }
 
     /**
+     * @inheritDoc
      * @throws \Exception
      */
     public function load(array $configs, ContainerBuilder $container): void
     {
-        $loader = new YamlFileLoader($container, new FileLocator(dirname(__DIR__).'/../config'));
+        $loader = new YamlFileLoader($container, new FileLocator(dirname(__DIR__) . '/../config'));
         $loader->load('services.yaml');
 
         $container->setParameter(
