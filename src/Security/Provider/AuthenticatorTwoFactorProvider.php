@@ -22,7 +22,6 @@ final readonly class AuthenticatorTwoFactorProvider implements TwoFactorProvider
     ) {
     }
 
-    #[\Override]
     public function beginAuthentication(AuthenticationContextInterface $context): bool
     {
         $user = $context->getUser();
@@ -49,12 +48,10 @@ final readonly class AuthenticatorTwoFactorProvider implements TwoFactorProvider
         return true;
     }
 
-    #[\Override]
     public function prepareAuthentication(object $user): void
     {
     }
 
-    #[\Override]
     public function validateAuthenticationCode(object $user, string $authenticationCode): bool
     {
         if ($user instanceof User) {
@@ -68,7 +65,6 @@ final readonly class AuthenticatorTwoFactorProvider implements TwoFactorProvider
         return $this->authenticator->checkCode($user, $authenticationCode);
     }
 
-    #[\Override]
     public function getFormRenderer(): TwoFactorFormRendererInterface
     {
         return $this->formRenderer;
